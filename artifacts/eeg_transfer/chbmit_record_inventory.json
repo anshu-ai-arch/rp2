@@ -1,0 +1,15 @@
+{
+  "inventory_status": "NO_CHBMIT_DATASET_FOUND",
+  "dataset_root": "data/chbmit",
+  "timestamp": "2026-09-17T12:14:40.453088+00:00",
+  "total_subjects_found": 0,
+  "total_edf_recordings": 0,
+  "total_annotation_files": 0,
+  "per_subject_counts": {},
+  "sampling_rate_distribution": {},
+  "channel_count_distribution": {},
+  "channel_label_patterns": [],
+  "seizure_recordings": [],
+  "unreadable_missing_unusual_files": [],
+  "subjects": {}
+}

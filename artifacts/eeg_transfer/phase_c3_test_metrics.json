@@ -1,0 +1,159 @@
+{
+  "evaluation_timestamp": "2026-09-20 09:18:08 UTC",
+  "checkpoint_used": "checkpoints/eeg_transfer_gru_subject_wise_best.pth",
+  "ecg_checkpoint_sha256": "4b39b3b070fc763a7ff8a7ff68b0968e045033463ea50042f77f4d21d627b499",
+  "device": "mps",
+  "total_test_samples": 1654,
+  "seizure_samples": 502,
+  "non_seizure_samples": 1152,
+  "test_subjects": [
+    "chb02",
+    "chb10",
+    "chb17",
+    "chb24"
+  ],
+  "overall_metrics": {
+    "accuracy": 77.02539298669892,
+    "precision": 65.40404040404042,
+    "recall": 51.59362549800797,
+    "sensitivity": 51.59362549800797,
+    "specificity": 88.10763888888889,
+    "f1": 57.6837416481069,
+    "kappa": 0.4221610947055644,
+    "tn": 1015,
+    "fp": 137,
+    "fn": 243,
+    "tp": 259,
+    "confusion_matrix": [
+      [
+        1015,
+        137
+      ],
+      [
+        243,
+        259
+      ]
+    ]
+  },
+  "per_subject_metrics": [
+    {
+      "accuracy": 92.91553133514986,
+      "precision": 73.91304347826086,
+      "recall": 70.83333333333334,
+      "sensitivity": 70.83333333333334,
+      "specificity": 96.23824451410658,
+      "f1": 72.3404255319149,
+      "kappa": 0.682800345721694,
+      "tn": 307,
+      "fp": 12,
+      "fn": 14,
+      "tp": 34,
+      "confusion_matrix": [
+        [
+          307,
+          12
+        ],
+        [
+          14,
+          34
+        ]
+      ],
+      "subject_id": "chb02",
+      "total_samples": 367,
+      "seizure_samples": 48,
+      "non_seizure_samples": 319
+    },
+    {
+      "accuracy": 87.12522045855378,
+      "precision": 73.39449541284404,
+      "recall": 64.51612903225806,
+      "sensitivity": 64.51612903225806,
+      "specificity": 93.45372460496614,
+      "f1": 68.6695278969957,
+      "kappa": 0.6060963655916025,
+      "tn": 414,
+      "fp": 29,
+      "fn": 44,
+      "tp": 80,
+      "confusion_matrix": [
+        [
+          414,
+          29
+        ],
+        [
+          44,
+          80
+        ]
+      ],
+      "subject_id": "chb10",
+      "total_samples": 567,
+      "seizure_samples": 124,
+      "non_seizure_samples": 443
+    },
+    {
+      "accuracy": 59.32835820895522,
+      "precision": 39.33333333333333,
+      "recall": 76.62337662337663,
+      "sensitivity": 76.62337662337663,
+      "specificity": 52.35602094240838,
+      "f1": 51.98237885462555,
+      "kappa": 0.2258850964596142,
+      "tn": 100,
+      "fp": 91,
+      "fn": 18,
+      "tp": 59,
+      "confusion_matrix": [
+        [
+          100,
+          91
+        ],
+        [
+          18,
+          59
+        ]
+      ],
+      "subject_id": "chb17",
+      "total_samples": 268,
+      "seizure_samples": 77,
+      "non_seizure_samples": 191
+    },
+    {
+      "accuracy": 61.94690265486725,
+      "precision": 94.5054945054945,
+      "recall": 33.99209486166008,
+      "sensitivity": 33.99209486166008,
+      "specificity": 97.48743718592965,
+      "f1": 50.0,
+      "kappa": 0.2896328648964748,
+      "tn": 194,
+      "fp": 5,
+      "fn": 167,
+      "tp": 86,
+      "confusion_matrix": [
+        [
+          194,
+          5
+        ],
+        [
+          167,
+          86
+        ]
+      ],
+      "subject_id": "chb24",
+      "total_samples": 452,
+      "seizure_samples": 253,
+      "non_seizure_samples": 199
+    }
+  ],
+  "parameter_integrity": {
+    "param_hash_match": true,
+    "zero_parameter_mutation": true,
+    "ecg_checkpoint_sha256_match": true
+  },
+  "test_isolation": {
+    "test_used_for_training": false,
+    "test_used_for_checkpoint_selection": false,
+    "test_used_for_hyperparameter_tuning": false,
+    "test_used_for_threshold_tuning": false
+  }
+}

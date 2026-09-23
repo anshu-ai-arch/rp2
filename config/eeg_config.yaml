@@ -1,0 +1,21 @@
+# =============================================================================
+# EEG TRANSFER LEARNING PLACEHOLDER CONFIGURATION
+# =============================================================================
+# IMPORTANT: This configuration is strictly isolated for the EEG transfer-learning
+# research track. The existing ECG configuration (config.yaml) is untouched.
+#
+# NOTE: Architectural, preprocessing, signal filtering, DWT, channel selection,
+# dataset splitting, and hyperparameter decisions are intentionally NOT set.
+# =============================================================================
+
+eeg_storage:
+  research_root: "/content/drive/MyDrive/eeg_transfer_research"
+  raw_data_dir: "/content/drive/MyDrive/eeg_transfer_research/data/chbmit"
+  checkpoint_dir: "/content/drive/MyDrive/eeg_transfer_research/checkpoints"
+  artifact_dir: "/content/drive/MyDrive/eeg_transfer_research/artifacts"
+  log_dir: "/content/drive/MyDrive/eeg_transfer_research/logs"
+  experiment_dir: "/content/drive/MyDrive/eeg_transfer_research/experiments"
+
+eeg_environment:
+  device: "auto"  # Placeholder: "auto" evaluates to CUDA GPU in Colab
+  status: "PLACEHOLDER_NOT_CONFIGURED"

@@ -1,0 +1,15 @@
+{
+  "inventory_status": "NO_EEG_DATASET_FOUND",
+  "inspected_directories": [
+    "data/raw"
+  ],
+  "total_files_inspected": 141,
+  "total_eeg_recordings_found": 0,
+  "total_patients_identified": "UNKNOWN",
+  "patient_identifiers": [],
+  "sampling_frequency_distribution": {},
+  "channel_count_distribution": {},
+  "channel_name_patterns": [],
+  "unreadable_or_corrupted_files": [],
+  "recordings": []
+}

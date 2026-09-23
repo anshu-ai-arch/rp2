@@ -1,0 +1,170 @@
+{
+  "manifest_metadata": {
+    "title": "EEG Transfer Learning Google Colab Dependency Closure Manifest",
+    "timestamp": "2026-09-17T21:05:00+05:30",
+    "audit_type": "Read-Only Dependency Closure Audit",
+    "status": "VERIFIED_MINIMAL_CLOSURE"
+  },
+  "pretrained_artifacts_required": [
+    {
+      "path": "checkpoints/model_c_medium_augmented_best.pth",
+      "description": "Pre-trained Model C Medium ECG model checkpoint used as source for backbone extraction",
+      "size_bytes": 1500000
+    },
+    {
+      "path": "checkpoints/backbone_1d_cnn_pretrained.pth",
+      "description": "Extracted 3-stage 1D CNN feature backbone weights loaded by ECGTransferModel",
+      "size_bytes": 581632
+    }
+  ],
+  "categories": {
+    "CATEGORY_A_eeg_only_source_files": [
+      {
+        "path": "src/eeg/__init__.py",
+        "purpose": "Package initializer for EEG utilities",
+        "imported_by": ["src/eeg/dataset_inventory.py", "src/eeg/chbmit_inventory.py"],
+        "contains_ecg_logic": false
+      },
+      {
+        "path": "src/eeg/dataset_inventory.py",
+        "purpose": "Generic read-only EEG metadata parser (ANSI EDF header binary reader & text summary parser)",
+        "imported_by": ["src/eeg/chbmit_inventory.py", "generate_eeg_inventory_artifact.py"],
+        "contains_ecg_logic": false
+      },
+      {
+        "path": "src/eeg/chbmit_inventory.py",
+        "purpose": "CHB-MIT subject and record structural inventory parser",
+        "imported_by": ["tests/test_chbmit_inventory.py"],
+        "contains_ecg_logic": false
+      },
+      {
+        "path": "generate_eeg_inventory_artifact.py",
+        "purpose": "Top-level script to trigger EEG dataset inventory generation",
+        "imported_by": ["Manual execution"],
+        "contains_ecg_logic": false
+      },
+      {
+        "path": "notebooks/Colab_EEG_Transfer_Pipeline.ipynb",
+        "purpose": "Google Colab environment setup & verification notebook",
+        "imported_by": ["Google Colab execution"],
+        "contains_ecg_logic": false
+      }
+    ],
+    "CATEGORY_B_shared_source_files_required_by_eeg": [
+      {
+        "path": "src/models/transfer_ecg_model.py",
+        "purpose": "ECGTransferModel PyTorch architecture (loads pre-trained 1D CNN backbone, attaches BiGRU + classification head)",
+        "imported_by": ["EEG transfer training and evaluation scripts"],
+        "contains_ecg_logic": false
+      },
+      {
+        "path": "export_transfer_backbone.py",
+        "purpose": "Script to extract 1D CNN feature backbone weights from pre-trained model checkpoint",
+        "imported_by": ["Manual execution or automated backbone setup"],
+        "contains_ecg_logic": true
+      },
+      {
+        "path": "experiments/count_parameters_compression_models.py",
+        "purpose": "Defines GenericHybrid1DBiCNNGRU class required by export_transfer_backbone.py",
+        "imported_by": ["export_transfer_backbone.py"],
+        "contains_ecg_logic": true,
+        "hidden_dependency": true
+      },
+      {
+        "path": "src/engine/trainer.py",
+        "purpose": "PyTorch training engine, device selection (get_device), model checkpoint saving",
+        "imported_by": ["EEG transfer training scripts"],
+        "contains_ecg_logic": false
+      },
+      {
+        "path": "src/engine/losses.py",
+        "purpose": "FocalLoss implementation for imbalanced sequence classification",
+        "imported_by": ["src/engine/trainer.py"],
+        "contains_ecg_logic": false
+      },
+      {
+        "path": "src/engine/evaluate.py",
+        "purpose": "Evaluation metrics computation and validation loop",
+        "imported_by": ["EEG transfer evaluation scripts"],
+        "contains_ecg_logic": false
+      },
+      {
+        "path": "src/engine/metrics.py",
+        "purpose": "Macro F1, sensitivity, specificity, and confusion matrix calculation utilities",
+        "imported_by": ["src/engine/evaluate.py", "src/engine/trainer.py"],
+        "contains_ecg_logic": false
+      }
+    ],
+    "CATEGORY_C_pretrained_artifacts_required": [
+      {
+        "path": "checkpoints/model_c_medium_augmented_best.pth",
+        "purpose": "Source pre-trained Model C Medium ECG model checkpoint",
+        "imported_by": ["export_transfer_backbone.py"]
+      },
+      {
+        "path": "checkpoints/backbone_1d_cnn_pretrained.pth",
+        "purpose": "Extracted 1D CNN 3-stage feature backbone weights",
+        "imported_by": ["src/models/transfer_ecg_model.py"]
+      }
+    ],
+    "CATEGORY_D_eeg_configuration_files": [
+      {
+        "path": "config/eeg_config.yaml",
+        "purpose": "Dedicated EEG transfer learning configuration file",
+        "imported_by": ["Colab EEG pipeline execution"]
+      }
+    ],
+    "CATEGORY_E_tests_verifying_eeg_pipeline": [
+      {
+        "path": "tests/test_eeg_inventory.py",
+        "purpose": "Unit test suite for generic EEG inventory parser",
+        "imported_by": ["unittest test runner"]
+      },
+      {
+        "path": "tests/test_chbmit_inventory.py",
+        "purpose": "Unit test suite for CHB-MIT record inventory parser",
+        "imported_by": ["unittest test runner"]
+      }
+    ],
+    "CATEGORY_F_not_required_for_colab_eeg_work": [
+      "data/raw/*",
+      "data/processed/*",
+      "config.yaml",
+      "src/models/cnn_model.py",
+      "src/models/gru_model.py",
+      "src/models/lstm_model.py",
+      "src/models/hybrid_cnn_gru.py",
+      "src/models/hybrid_cnn_lstm_gru.py",
+      "src/models/hybrid_1d_cnn_gru.py",
+      "src/models/hybrid_1d_bi_cnn_gru.py",
+      "src/models/hybrid_1d_cnn_lstm_gru.py",
+      "src/models/hybrid_1d_cnn_transformer.py",
+      "src/models/hybrid_1d_cnn_transformer_fusion.py",
+      "src/models/hybrid_1d_multiscale_se_bigru.py",
+      "src/models/factory.py",
+      "src/models/base_model.py",
+      "src/data/dataset.py",
+      "src/data/preprocessing.py",
+      "src/data/split.py",
+      "train_augmented_model_c.py",
+      "eval_model_c.py",
+      "optuna_tune_model_c.py",
+      "optuna_tune_accuracy_model_c.py",
+      "optimize_model_c.py",
+      "raspberry_pi_ecg_inference.py",
+      "pi4_live_sensor_ecg.py",
+      "pi4_ds2_benchmark.py",
+      "export_model_to_onnx.py",
+      "generate_publication_plots.py",
+      "generate_final_model_comparison_plot.py",
+      "verify_confusion_matrix_medium.py",
+      "count_parameters_model_c.py",
+      "experiments/run_model_c_small.py",
+      "experiments/run_model_c_medium.py",
+      "experiments/run_model_c_medium_gru32.py",
+      "experiments/evaluate_experiment_a.py",
+      "experiments/evaluate_patient_wise.py",
+      "cockroach/*"
+    ]
+  }
+}
