@@ -1,1 +1,3 @@
-# Utils package initialization
+from src.utils.device import get_device
+
+__all__ = ["get_device"]

@@ -1,12 +1,12 @@
-torch>=2.0.0
-torchaudio>=2.0.0
-wfdb>=4.1.0
-scipy>=1.10.0
-numpy>=1.24.0
-pandas>=2.0.0
-scikit-learn>=1.2.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
-pyyaml>=6.0
-tqdm>=4.65.0
-optuna>=3.0.0
+# Additional Non-PyTorch Dependencies for ECG Research Project on Google Colab
+# Note: PyTorch is pre-installed in Google Colab with CUDA support and is omitted here.
+
+scipy
+pandas
+scikit-learn
+wfdb
+pyyaml
+psutil
+matplotlib
+seaborn
+optuna

@@ -54,11 +54,34 @@ class ArrhythmiaDatasetRaw(Dataset):
 def load_ds1_record_data(config_path: str = "config.yaml") -> Dict[str, Tuple[np.ndarray, np.ndarray]]:
     """
     Loads raw 1D beat segments and labels grouped by record_id (patient) for DS1.
+    Supports portable path resolution relative to PROJECT_ROOT or via ECG_DATA_DIR environment variable.
     """
-    with open(config_path, "r") as f:
+    project_root = Path(__file__).resolve().parents[1]
+    cfg_path = Path(config_path)
+    if not cfg_path.is_absolute():
+        cfg_path = project_root / cfg_path
+
+    if not cfg_path.exists():
+        raise FileNotFoundError(f"[!] Configuration file not found at '{cfg_path}'")
+
+    with open(cfg_path, "r") as f:
         config = yaml.safe_load(f)
 
-    data_dir = Path(config["data"]["data_dir"])
+    # Allow environment variable override for Google Drive / custom dataset path
+    env_data_dir = os.getenv("ECG_DATA_DIR")
+    if env_data_dir:
+        data_dir = Path(env_data_dir)
+    else:
+        raw_dir = Path(config["data"]["data_dir"])
+        data_dir = raw_dir if raw_dir.is_absolute() else (project_root / raw_dir)
+
+    if not data_dir.exists():
+        raise FileNotFoundError(
+            f"\n[!] Dataset directory not found at: '{data_dir}'\n"
+            f"    Please ensure the MIT-BIH dataset is present at that location, or set the "
+            f"environment variable 'ECG_DATA_DIR' (e.g. export ECG_DATA_DIR='/content/drive/MyDrive/mitdb')."
+        )
+
     use_filtering = config["data"].get("use_filtering", True)
 
     preprocessor = ECGPreprocessor(

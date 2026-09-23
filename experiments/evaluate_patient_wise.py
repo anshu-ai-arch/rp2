@@ -10,12 +10,11 @@ from src.data.preprocessor import ECGPreprocessor
 from src.data.beat_extractor import ECGBeatExtractor
 
 
+from src.utils.device import get_device
+
+
 def get_m1_device() -> torch.device:
-    if torch.backends.mps.is_available():
-        return torch.device("mps")
-    elif torch.cuda.is_available():
-        return torch.device("cuda")
-    return torch.device("cpu")
+    return get_device()
 
 
 @torch.no_grad()

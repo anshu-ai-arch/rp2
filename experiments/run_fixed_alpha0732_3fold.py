@@ -53,10 +53,12 @@ def run_fixed_alpha0732_3fold_experiment():
     print(f"    - batch_size:     {FIXED_HP['batch_size']}")
     print(f"    - epochs:         {FIXED_HP['epochs']}")
 
-    print("\n[*] Loading DS1 patient record data...")
-    record_data = load_ds1_record_data("config.yaml")
+    project_root = Path(__file__).resolve().parents[1]
 
-    checkpoints_dir = Path("checkpoints/ecg_fixed_alpha0732_3fold")
+    print("\n[*] Loading DS1 patient record data...")
+    record_data = load_ds1_record_data(str(project_root / "config.yaml"))
+
+    checkpoints_dir = project_root / "checkpoints/ecg_fixed_alpha0732_3fold"
     checkpoints_dir.mkdir(parents=True, exist_ok=True)
 
     fold_results = {}
@@ -318,7 +320,7 @@ def run_fixed_alpha0732_3fold_experiment():
         "fold_results": fold_results
     }
 
-    results_json = Path("experiments/results_ecg_fixed_alpha0732_3fold.json")
+    results_json = project_root / "experiments/results_ecg_fixed_alpha0732_3fold.json"
     with open(results_json, "w") as f:
         json.dump(save_data, f, indent=2)
 
