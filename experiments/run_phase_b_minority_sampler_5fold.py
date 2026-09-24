@@ -108,6 +108,27 @@ HYPERPARAMETERS = {
 }
 
 
+def make_json_serializable(obj):
+    """
+    Recursively converts NumPy scalars, arrays, and standard container types
+    into standard Python JSON-serializable types (bool, int, float, list, dict).
+    """
+    if isinstance(obj, (bool, np.bool_)):
+        return bool(obj)
+    elif isinstance(obj, (int, np.integer)):
+        return int(obj)
+    elif isinstance(obj, (float, np.floating)):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return [make_json_serializable(x) for x in obj.tolist()]
+    elif isinstance(obj, dict):
+        return {str(k): make_json_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [make_json_serializable(x) for x in obj]
+    return obj
+
+
+
 def resolve_data_directory(custom_data_dir: str = None) -> Path:
     """
     Resolves ECG dataset directory across local environments and Kaggle.
@@ -409,6 +430,56 @@ def run_phase_b_training(
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="max", factor=0.5, patience=3)
 
         ckpt_path = fold_dir / "best_model.pth"
+        if ckpt_path.exists():
+            print(f"\n[*] Existing checkpoint found for Fold {fold_idx} at '{ckpt_path}'. Loading saved model state...")
+            checkpoint = torch.load(ckpt_path, map_location=device)
+            model = GenericHybrid1DBiCNNGRU(
+                in_channels=1,
+                cnn_channels=[64, 128, 128],
+                kernel_sizes=[5, 5, 3],
+                gru_hidden_size=64,
+                gru_num_layers=2,
+                dropout=0.2076,
+                num_classes=5
+            ).to(device)
+            model.load_state_dict(checkpoint["model_state_dict"])
+            model.eval()
+            val_preds = []
+            with torch.no_grad():
+                for batch in val_loader:
+                    _, b1d, _ = batch
+                    b1d = b1d.to(device)
+                    outputs = model(b1d)
+                    preds = outputs.argmax(dim=1).cpu().numpy()
+                    val_preds.append(preds)
+            best_val_preds = np.concatenate(val_preds, axis=0)
+            best_epoch = checkpoint.get("epoch", 0)
+            best_metrics = checkpoint.get("metrics", compute_active_metrics(best_val_preds, y_val))
+            best_flow_analysis = checkpoint.get("confusion_analysis", compute_confusion_matrix_and_flows(best_val_preds, y_val))
+
+            with open(fold_dir / "metrics.json", "w") as f:
+                json.dump(make_json_serializable({"best_epoch": best_epoch, "metrics": best_metrics}), f, indent=2)
+            with open(fold_dir / "confusion_matrix.json", "w") as f:
+                json.dump(make_json_serializable(best_flow_analysis), f, indent=2)
+
+            val_preds_all_folds.append(best_val_preds)
+            val_targets_all_folds.append(y_val)
+            fold_results[f"fold_{fold_idx}"] = {
+                "fold_idx": fold_idx,
+                "train_records": sorted(train_records),
+                "val_records": sorted(val_records),
+                "counts_train": counts_train,
+                "counts_val": counts_val,
+                "best_epoch": best_epoch,
+                "best_metrics": best_metrics,
+                "confusion_analysis": best_flow_analysis
+            }
+            print(f"[✓] Fold {fold_idx}/5 Recovered from Checkpoint! Best Epoch {best_epoch} | Min F1: {best_metrics['minority_macro_f1']:.2f}% | N Rec: {best_metrics['normal_recall']:.2f}%")
+            del model
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            continue
 
         best_score_tuple = (-999.0, -999.0, -999.0, -999.0)
         best_metrics = {}
@@ -461,7 +532,7 @@ def run_phase_b_training(
             macro_f1 = metrics["active_macro_f1"]
             acc = metrics["active_accuracy"]
 
-            meets_n_constraint = (n_recall >= 96.5)
+            meets_n_constraint = bool(n_recall >= 96.5)
             cand_score_tuple = (1.0 if meets_n_constraint else 0.0, min_f1, macro_f1, n_recall)
 
             epoch_log = {
@@ -495,11 +566,11 @@ def run_phase_b_training(
 
         # Save Fold JSON Files
         with open(fold_dir / "metrics.json", "w") as f:
-            json.dump({"best_epoch": best_epoch, "metrics": best_metrics}, f, indent=2)
+            json.dump(make_json_serializable({"best_epoch": best_epoch, "metrics": best_metrics}), f, indent=2)
         with open(fold_dir / "confusion_matrix.json", "w") as f:
-            json.dump(best_flow_analysis, f, indent=2)
+            json.dump(make_json_serializable(best_flow_analysis), f, indent=2)
         with open(fold_dir / "history.json", "w") as f:
-            json.dump(epoch_history, f, indent=2)
+            json.dump(make_json_serializable(epoch_history), f, indent=2)
 
         fold_results[f"fold_{fold_idx}"] = {
             "fold_idx": fold_idx,
@@ -564,7 +635,7 @@ def run_phase_b_training(
     }
 
     with open(output_dir / "pooled_results.json", "w") as f:
-        json.dump(save_data, f, indent=2)
+        json.dump(make_json_serializable(save_data), f, indent=2)
 
     print(f"[✓] Phase B 5-Fold Training Complete! Saved pooled results to '{output_dir / 'pooled_results.json'}'")
     return save_data
